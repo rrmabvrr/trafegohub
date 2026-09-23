@@ -34,7 +34,10 @@ class SyncPlatformMetricsJob implements ShouldQueue
 
         foreach ($integrations->get() as $integration) {
             if (blank($integration->access_token)) {
-                $integration->update(['status' => 'ERROR']);
+                $integration->update([
+                    'status' => 'ERROR',
+                    'last_error' => 'Token de acesso não configurado.',
+                ]);
                 Log::warning('Integration skipped because no official adapter or access token is configured.', [
                     'integration_id' => $integration->id,
                     'platform' => $integration->platform,
@@ -100,9 +103,13 @@ class SyncPlatformMetricsJob implements ShouldQueue
                 $integration->update([
                     'status' => 'CONNECTED',
                     'last_synced_at' => now(),
+                    'last_error' => null,
                 ]);
             } catch (\Throwable $exception) {
-                $integration->update(['status' => 'ERROR']);
+                $integration->update([
+                    'status' => 'ERROR',
+                    'last_error' => $exception->getMessage(),
+                ]);
                 Log::error('Advertising platform synchronization failed.', [
                     'integration_id' => $integration->id,
                     'message' => $exception->getMessage(),

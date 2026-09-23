@@ -74,4 +74,9 @@ class Campaign extends Model
     {
         return $this->hasMany(Lead::class);
     }
+
+    public function metricSnapshots(): HasMany
+    {
+        return $this->hasMany(CampaignMetricSnapshot::class);
+    }
 }

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.svg') }}">
     <title>TRAFEGO HUB | Central de Inteligência de Anúncios</title>
     
     <!-- Google Fonts -->
@@ -82,6 +85,11 @@
                     <a href="{{ route('campaigns') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('campaigns') ? 'bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                         <svg class="w-5 h-5 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                         <span x-show="sidebarOpen">Gestor de Campanhas</span>
+                    </a>
+
+                    <a href="{{ route('clients') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('clients') ? 'bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                        <svg class="w-5 h-5 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11a4 4 0 10-8 0 4 4 0 008 0zM4 20a8 8 0 0116 0M19 8h2m-1-1v2"/></svg>
+                        <span x-show="sidebarOpen">Clientes</span>
                     </a>
 
                     <a href="{{ route('integrations') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('integrations') ? 'bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">

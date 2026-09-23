@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Client extends Model
 {
@@ -14,6 +15,14 @@ class Client extends Model
     protected $fillable = [
         'organization_id',
         'name',
+        'legal_name',
+        'document',
+        'email',
+        'phone',
+        'whatsapp',
+        'address',
+        'status',
+        'notes',
         'external_reference',
     ];
 
@@ -27,9 +36,14 @@ class Client extends Model
         return $this->hasMany(Workspace::class);
     }
 
-    public function campaigns(): HasMany
+    public function campaigns(): HasManyThrough
     {
         return $this->hasManyThrough(Campaign::class, Workspace::class);
+    }
+
+    public function advertisingAccounts(): HasManyThrough
+    {
+        return $this->hasManyThrough(Integration::class, Workspace::class);
     }
 
     public function reports(): HasMany

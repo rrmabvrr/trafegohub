@@ -67,11 +67,8 @@ class MetaAdsSyncTest extends TestCase
             'access_token' => 'test-token',
         ]);
 
-        $this->assertDatabaseHas('integrations', [
-            'id' => $integration->id,
-            'status' => 'CONNECTED',
-            'access_token' => 'test-token',
-        ]);
+        $this->assertSame('CONNECTED', $integration->fresh()->status);
+        $this->assertSame('test-token', $integration->fresh()->access_token);
 
         $job = new SyncPlatformMetricsJob($integration->id);
         $job->handle(app(AdvertisingPlatformManager::class));

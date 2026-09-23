@@ -35,4 +35,28 @@ return [
         ],
     ],
 
+    'oauth' => [
+        'meta' => [
+            'authorize_url' => env('META_OAUTH_AUTHORIZE_URL'),
+            'token_url' => env('META_OAUTH_TOKEN_URL'),
+            'client_id' => env('META_OAUTH_CLIENT_ID'),
+            'client_secret' => env('META_OAUTH_CLIENT_SECRET'),
+            'scopes' => array_filter(explode(',', (string) env('META_OAUTH_SCOPES', 'ads_read,ads_management'))),
+        ],
+        'google' => [
+            'authorize_url' => env('GOOGLE_OAUTH_AUTHORIZE_URL'),
+            'token_url' => env('GOOGLE_OAUTH_TOKEN_URL'),
+            'client_id' => env('GOOGLE_OAUTH_CLIENT_ID'),
+            'client_secret' => env('GOOGLE_OAUTH_CLIENT_SECRET'),
+            'scopes' => array_filter(explode(',', (string) env('GOOGLE_OAUTH_SCOPES', 'https://www.googleapis.com/auth/adwords'))),
+        ],
+        'tiktok' => [
+            'authorize_url' => env('TIKTOK_OAUTH_AUTHORIZE_URL'),
+            'token_url' => env('TIKTOK_OAUTH_TOKEN_URL'),
+            'client_id' => env('TIKTOK_OAUTH_CLIENT_ID'),
+            'client_secret' => env('TIKTOK_OAUTH_CLIENT_SECRET'),
+            'scopes' => array_filter(explode(',', (string) env('TIKTOK_OAUTH_SCOPES', ''))),
+        ],
+    ],
+
 ];

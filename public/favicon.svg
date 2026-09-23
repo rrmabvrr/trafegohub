@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Trafego Hub</title>
+  <defs>
+    <linearGradient id="mark" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00f2fe"/>
+      <stop offset="1" stop-color="#7928ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#07090e"/>
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="none" stroke="url(#mark)" stroke-width="3"/>
+  <path d="M16 18h32v8H36v22h-8V26H16z" fill="#00f2fe"/>
+  <path d="M40 18h8v30h-8z" fill="#7928ca"/>
+</svg>
