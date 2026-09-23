@@ -8,6 +8,7 @@ use App\Models\AdSet;
 use App\Models\Campaign;
 use App\Models\Integration;
 use App\Models\Workspace;
+use App\Services\AdvertisingPlatformManager;
 use App\Services\MetaAdsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
@@ -73,8 +74,8 @@ class MetaAdsSyncTest extends TestCase
         ]);
 
         $job = new SyncPlatformMetricsJob($integration->id);
-        $job->handle(app(MetaAdsService::class));
-        $job->handle(app(MetaAdsService::class));
+        $job->handle(app(AdvertisingPlatformManager::class));
+        $job->handle(app(AdvertisingPlatformManager::class));
 
         Http::assertSentCount(2);
         $this->assertDatabaseCount('campaigns', 1);
@@ -105,7 +106,7 @@ class MetaAdsSyncTest extends TestCase
         ]);
 
         (new SyncPlatformMetricsJob($integration->id))
-            ->handle(app(MetaAdsService::class));
+            ->handle(app(AdvertisingPlatformManager::class));
 
         Http::assertNothingSent();
         $this->assertSame('ERROR', $integration->fresh()->status);

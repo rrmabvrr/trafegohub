@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Campaign;
 use App\Models\Workspace;
-use App\Services\MetaAdsService;
+use App\Services\AdvertisingPlatformManager;
 use Livewire\Component;
 
 class CampaignsManager extends Component
@@ -41,7 +41,7 @@ class CampaignsManager extends Component
         }
     }
 
-    public function toggleStatus(int $campaignId, MetaAdsService $metaAdsService): void
+    public function toggleStatus(int $campaignId, AdvertisingPlatformManager $platformManager): void
     {
         $campaign = Campaign::with('integration')->find($campaignId);
 
@@ -55,11 +55,10 @@ class CampaignsManager extends Component
                     return;
                 }
 
-                $updatedRemotely = $metaAdsService->updateCampaignStatus(
-                    $campaign->integration,
-                    $campaign->external_id,
-                    $nextStatus,
-                );
+                $platform = $platformManager->for($campaign->integration);
+                $updatedRemotely = $nextStatus === 'PAUSED'
+                    ? $platform->pauseCampaign($campaign->integration, $campaign->external_id)
+                    : $platform->activateCampaign($campaign->integration, $campaign->external_id);
 
                 if (! $updatedRemotely) {
                     $this->dispatch('notify', ['message' => 'Não foi possível atualizar a campanha na plataforma.']);

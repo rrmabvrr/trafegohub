@@ -6,7 +6,7 @@ use App\Models\Ad;
 use App\Models\AdSet;
 use App\Models\Campaign;
 use App\Models\Integration;
-use App\Services\MetaAdsService;
+use App\Services\AdvertisingPlatformManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,7 +22,7 @@ class SyncPlatformMetricsJob implements ShouldQueue
 
     public function __construct(public ?int $integrationId = null) {}
 
-    public function handle(MetaAdsService $metaAdsService): void
+    public function handle(AdvertisingPlatformManager $platformManager): void
     {
         Log::info('Starting official advertising platform synchronization.');
 
@@ -33,7 +33,7 @@ class SyncPlatformMetricsJob implements ShouldQueue
         }
 
         foreach ($integrations->get() as $integration) {
-            if ($integration->platform !== 'meta' || blank($integration->access_token)) {
+            if (blank($integration->access_token)) {
                 $integration->update(['status' => 'ERROR']);
                 Log::warning('Integration skipped because no official adapter or access token is configured.', [
                     'integration_id' => $integration->id,
@@ -46,8 +46,10 @@ class SyncPlatformMetricsJob implements ShouldQueue
             $integration->update(['status' => 'SYNCING']);
 
             try {
-                DB::transaction(function () use ($integration, $metaAdsService): void {
-                    foreach ($metaAdsService->fetchCampaignHierarchy($integration) as $campaignData) {
+                $platform = $platformManager->for($integration);
+
+                DB::transaction(function () use ($integration, $platform): void {
+                    foreach ($platform->getCampaigns($integration) as $campaignData) {
                         $campaign = Campaign::updateOrCreate(
                             [
                                 'integration_id' => $integration->id,

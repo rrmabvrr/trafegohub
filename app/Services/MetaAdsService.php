@@ -3,13 +3,32 @@
 namespace App\Services;
 
 use App\Models\Integration;
-use App\Services\Contracts\AdvertisingPlatformService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class MetaAdsService implements AdvertisingPlatformService
+class MetaAdsService extends AbstractAdvertisingPlatformService
 {
     protected string $baseUrl = 'https://graph.facebook.com/v21.0';
+
+    public function platform(): string
+    {
+        return 'meta';
+    }
+
+    public function getCampaigns(Integration $integration, array $filters = []): array
+    {
+        return $this->fetchCampaignHierarchy($integration);
+    }
+
+    public function pauseCampaign(Integration $integration, string $externalCampaignId): bool
+    {
+        return $this->updateCampaignStatus($integration, $externalCampaignId, 'PAUSED');
+    }
+
+    public function activateCampaign(Integration $integration, string $externalCampaignId): bool
+    {
+        return $this->updateCampaignStatus($integration, $externalCampaignId, 'ACTIVE');
+    }
 
     public function fetchCampaignHierarchy(Integration $integration): array
     {
