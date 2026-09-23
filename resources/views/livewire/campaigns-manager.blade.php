@@ -18,7 +18,7 @@
     <!-- Toolbar Filters -->
     <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-3">
         <div class="flex items-center gap-2 overflow-x-auto">
-            @foreach(['all' => 'Todas', 'meta' => 'Meta Ads', 'google' => 'Google Ads', 'tiktok' => 'TikTok Ads', 'linkedin' => 'LinkedIn Ads', 'kwai' => 'Kwai Ads'] as $key => $label)
+            @foreach(['all' => 'Todas', 'meta' => 'Meta Ads', 'google' => 'Google Ads', 'tiktok' => 'TikTok Ads', 'linkedin' => 'LinkedIn Ads', 'microsoft' => 'Microsoft Advertising', 'pinterest' => 'Pinterest Ads', 'kwai' => 'Kwai Ads'] as $key => $label)
                 <button wire:click="$set('selectedPlatform', '{{ $key }}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold {{ $selectedPlatform === $key ? 'bg-brand-cyan text-slate-950 font-bold shadow-neon-blue' : 'bg-slate-900 text-slate-400 border border-slate-800' }}">
                     {{ $label }}
                 </button>
@@ -126,6 +126,8 @@
                             <option value="google">Google Ads</option>
                             <option value="tiktok">TikTok Ads</option>
                             <option value="linkedin">LinkedIn Ads</option>
+                            <option value="microsoft">Microsoft Advertising</option>
+                            <option value="pinterest">Pinterest Ads</option>
                             <option value="kwai">Kwai Ads</option>
                         </select>
                     </div>

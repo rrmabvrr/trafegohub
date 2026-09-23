@@ -11,6 +11,7 @@ use App\Services\GoogleAdsService;
 use App\Services\LinkedInAdsService;
 use App\Services\MetaAdsService;
 use App\Services\MicrosoftAdsService;
+use App\Services\PinterestAdsService;
 use App\Services\TikTokAdsService;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(TikTokAdsService::class),
                 $app->make(LinkedInAdsService::class),
                 $app->make(MicrosoftAdsService::class),
+                $app->make(PinterestAdsService::class),
             ]);
         });
     }

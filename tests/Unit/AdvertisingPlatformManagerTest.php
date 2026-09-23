@@ -13,7 +13,7 @@ class AdvertisingPlatformManagerTest extends TestCase
     {
         $manager = app(AdvertisingPlatformManager::class);
 
-        foreach (['meta', 'google', 'tiktok', 'linkedin', 'microsoft'] as $platform) {
+        foreach (['meta', 'google', 'tiktok', 'linkedin', 'microsoft', 'pinterest'] as $platform) {
             $integration = new Integration(['platform' => $platform]);
 
             $this->assertSame($platform, $manager->for($integration)->platform());
