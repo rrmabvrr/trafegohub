@@ -2,45 +2,76 @@
 
 namespace App\Services;
 
+use App\Models\Integration;
+use App\Services\Contracts\AdvertisingPlatformService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class MetaAdsService
+class MetaAdsService implements AdvertisingPlatformService
 {
-    protected string $baseUrl = 'https://graph.facebook.com/v19.0';
+    protected string $baseUrl = 'https://graph.facebook.com/v21.0';
 
-    public function fetchAccountCampaigns(string $accessToken, string $accountId): array
+    public function fetchCampaignHierarchy(Integration $integration): array
     {
         try {
-            $response = Http::withToken($accessToken)
-                ->get("{$this->baseUrl}/act_{$accountId}/campaigns", [
-                    'fields' => 'id,name,status,objective,daily_budget,insights{spend,impressions,clicks,ctr,cpc,conversions,purchase_roas}',
+            $response = Http::withToken($this->accessToken($integration))
+                ->acceptJson()
+                ->timeout(30)
+                ->retry(3, 250)
+                ->get("{$this->baseUrl}/act_{$this->accountId($integration)}/campaigns", [
+                    'fields' => implode(',', [
+                        'id',
+                        'name',
+                        'status',
+                        'objective',
+                        'daily_budget',
+                        'start_time',
+                        'stop_time',
+                        'insights{spend,impressions,clicks,ctr,cpc,conversions,purchase_roas}',
+                        'adsets{id,name,status,daily_budget,start_time,end_time,insights{spend,impressions,clicks,ctr,cpc,conversions,purchase_roas},ads{id,name,status,creative{id,name,title,body,image_url},insights{spend,impressions,clicks,ctr,cpc,conversions,purchase_roas}}}',
+                    ]),
                 ]);
 
-            if ($response->successful()) {
-                return $response->json('data', []);
-            }
+            return $response->throw()->json('data', []);
+        } catch (\Throwable $exception) {
+            Log::error('Meta Ads API request failed.', [
+                'integration_id' => $integration->id,
+                'message' => $exception->getMessage(),
+            ]);
 
-            Log::error("Meta Ads API Error: " . $response->body());
-            return [];
-        } catch (\Exception $e) {
-            Log::error("Meta Ads Exception: " . $e->getMessage());
-            return [];
+            throw $exception;
         }
     }
 
-    public function updateCampaignStatus(string $accessToken, string $campaignId, string $status): bool
+    public function updateCampaignStatus(Integration $integration, string $externalCampaignId, string $status): bool
     {
         try {
-            $response = Http::withToken($accessToken)
-                ->post("{$this->baseUrl}/{$campaignId}", [
+            return Http::withToken($this->accessToken($integration))
+                ->acceptJson()
+                ->timeout(30)
+                ->retry(3, 250)
+                ->post("{$this->baseUrl}/{$externalCampaignId}", [
                     'status' => $status,
-                ]);
+                ])
+                ->successful();
+        } catch (\Throwable $exception) {
+            Log::error('Meta Ads campaign update failed.', [
+                'integration_id' => $integration->id,
+                'external_campaign_id' => $externalCampaignId,
+                'message' => $exception->getMessage(),
+            ]);
 
-            return $response->successful();
-        } catch (\Exception $e) {
-            Log::error("Meta Ads Update Exception: " . $e->getMessage());
             return false;
         }
+    }
+
+    private function accessToken(Integration $integration): string
+    {
+        return (string) $integration->access_token;
+    }
+
+    private function accountId(Integration $integration): string
+    {
+        return preg_replace('/^act_/', '', trim($integration->account_id)) ?? trim($integration->account_id);
     }
 }

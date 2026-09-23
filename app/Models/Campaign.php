@@ -14,6 +14,7 @@ class Campaign extends Model
     protected $fillable = [
         'workspace_id',
         'integration_id',
+        'external_id',
         'platform',
         'name',
         'status',
@@ -56,6 +57,11 @@ class Campaign extends Model
     public function creatives(): HasMany
     {
         return $this->hasMany(Creative::class);
+    }
+
+    public function adSets(): HasMany
+    {
+        return $this->hasMany(AdSet::class);
     }
 
     public function leads(): HasMany

@@ -43,6 +43,7 @@
                         <th class="px-4 py-3.5">Cliques & CTR</th>
                         <th class="px-4 py-3.5">Conversões</th>
                         <th class="px-4 py-3.5">ROAS</th>
+                        <th class="px-4 py-3.5">Estrutura</th>
                         <th class="px-4 py-3.5 text-right">Ações</th>
                     </tr>
                 </thead>
@@ -72,10 +73,35 @@
                                 {{ $c->roas }}x
                             </span>
                         </td>
+                        <td class="px-4 py-3.5 text-[11px] text-slate-400">
+                            {{ $c->adSets->count() }} conjuntos /
+                            {{ $c->adSets->sum(fn ($adSet) => $adSet->ads->count()) }} anúncios
+                        </td>
                         <td class="px-4 py-3.5 text-right">
                             <button wire:click="duplicate({{ $c->id }})" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">Duplicar</button>
                         </td>
                     </tr>
+                    @if($c->adSets->isNotEmpty())
+                    <tr class="bg-slate-950/60">
+                        <td colspan="9" class="px-6 py-3">
+                            <div class="space-y-2">
+                                @foreach($c->adSets as $adSet)
+                                <div class="flex flex-col gap-1 border-l-2 border-brand-cyan/40 pl-3">
+                                    <div class="flex items-center justify-between text-[11px]">
+                                        <span class="font-semibold text-slate-200">{{ $adSet->name }}</span>
+                                        <span class="text-slate-500">{{ $adSet->ads->count() }} anúncios</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500">
+                                        @foreach($adSet->ads as $ad)
+                                        <span>{{ $ad->name }} <span class="text-slate-600">({{ $ad->status }})</span></span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </td>
+                    </tr>
+                    @endif
                     @endforeach
                 </tbody>
             </table>

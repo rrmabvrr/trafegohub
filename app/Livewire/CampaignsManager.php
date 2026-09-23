@@ -2,25 +2,35 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Campaign;
 use App\Models\Workspace;
+use App\Services\MetaAdsService;
+use Livewire\Component;
 
 class CampaignsManager extends Component
 {
     public int $workspaceId = 1;
+
     public string $selectedPlatform = 'all';
+
     public string $statusFilter = 'ALL';
+
     public string $search = '';
 
     public ?int $editingCampaignId = null;
+
     public float $editingBudget = 0;
 
     public bool $showCreateModal = false;
+
     public string $newCampaignName = '';
+
     public string $newPlatform = 'meta';
+
     public string $newObjective = 'SALES';
+
     public float $newDailyBudget = 300;
+
     public string $newAudience = '';
 
     public function mount(): void
@@ -31,13 +41,34 @@ class CampaignsManager extends Component
         }
     }
 
-    public function toggleStatus(int $campaignId): void
+    public function toggleStatus(int $campaignId, MetaAdsService $metaAdsService): void
     {
-        $campaign = Campaign::find($campaignId);
+        $campaign = Campaign::with('integration')->find($campaignId);
+
         if ($campaign) {
-            $campaign->update([
-                'status' => $campaign->status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE'
-            ]);
+            $nextStatus = $campaign->status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
+
+            if ($campaign->external_id) {
+                if ($campaign->platform !== 'meta' || ! $campaign->integration?->access_token) {
+                    $this->dispatch('notify', ['message' => 'Esta plataforma ainda não possui uma API oficial configurada.']);
+
+                    return;
+                }
+
+                $updatedRemotely = $metaAdsService->updateCampaignStatus(
+                    $campaign->integration,
+                    $campaign->external_id,
+                    $nextStatus,
+                );
+
+                if (! $updatedRemotely) {
+                    $this->dispatch('notify', ['message' => 'Não foi possível atualizar a campanha na plataforma.']);
+
+                    return;
+                }
+            }
+
+            $campaign->update(['status' => $nextStatus]);
         }
     }
 
@@ -61,7 +92,7 @@ class CampaignsManager extends Component
         $c = Campaign::find($campaignId);
         if ($c) {
             $replica = $c->replicate();
-            $replica->name = $c->name . ' (Cópia)';
+            $replica->name = $c->name.' (Cópia)';
             $replica->status = 'PAUSED';
             $replica->total_spend = 0;
             $replica->conversions = 0;
@@ -94,7 +125,8 @@ class CampaignsManager extends Component
 
     public function render()
     {
-        $query = Campaign::where('workspace_id', $this->workspaceId);
+        $query = Campaign::with('adSets.ads')
+            ->where('workspace_id', $this->workspaceId);
 
         if ($this->selectedPlatform !== 'all') {
             $query->where('platform', $this->selectedPlatform);
@@ -105,11 +137,11 @@ class CampaignsManager extends Component
         }
 
         if ($this->search) {
-            $query->where('name', 'like', '%' . $this->search . '%');
+            $query->where('name', 'like', '%'.$this->search.'%');
         }
 
         return view('livewire.campaigns-manager', [
-            'campaigns' => $query->orderBy('created_at', 'desc')->get()
+            'campaigns' => $query->orderBy('created_at', 'desc')->get(),
         ])->layout('layouts.app');
     }
 }
