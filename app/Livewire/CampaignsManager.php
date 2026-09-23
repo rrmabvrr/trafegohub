@@ -46,6 +46,7 @@ class CampaignsManager extends Component
         $campaign = Campaign::with('integration')->find($campaignId);
 
         if ($campaign) {
+            $this->authorize('update', $campaign);
             $nextStatus = $campaign->status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
 
             if ($campaign->external_id) {
@@ -73,6 +74,7 @@ class CampaignsManager extends Component
 
     public function editBudget(int $campaignId, float $currentBudget): void
     {
+        $this->authorize('update', Campaign::findOrFail($campaignId));
         $this->editingCampaignId = $campaignId;
         $this->editingBudget = $currentBudget;
     }
@@ -80,8 +82,9 @@ class CampaignsManager extends Component
     public function saveBudget(): void
     {
         if ($this->editingCampaignId && $this->editingBudget > 0) {
-            Campaign::where('id', $this->editingCampaignId)
-                ->update(['daily_budget' => $this->editingBudget]);
+            $campaign = Campaign::findOrFail($this->editingCampaignId);
+            $this->authorize('update', $campaign);
+            $campaign->update(['daily_budget' => $this->editingBudget]);
         }
         $this->editingCampaignId = null;
     }
@@ -90,6 +93,7 @@ class CampaignsManager extends Component
     {
         $c = Campaign::find($campaignId);
         if ($c) {
+            $this->authorize('create', [Campaign::class, $c->organization_id]);
             $replica = $c->replicate();
             $replica->name = $c->name.' (Cópia)';
             $replica->status = 'PAUSED';
@@ -103,6 +107,7 @@ class CampaignsManager extends Component
 
     public function createCampaign(): void
     {
+        $this->authorize('create', [Campaign::class, $this->organizationId()]);
         $this->validate([
             'newCampaignName' => 'required|string|max:255',
             'newDailyBudget' => 'required|numeric|min:10',
@@ -120,6 +125,11 @@ class CampaignsManager extends Component
         ]);
 
         $this->reset(['newCampaignName', 'newAudience', 'showCreateModal']);
+    }
+
+    private function organizationId(): int
+    {
+        return (int) (Workspace::findOrFail($this->workspaceId)->organization_id);
     }
 
     public function render()

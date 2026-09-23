@@ -2,6 +2,13 @@
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
+use App\Models\Campaign;
+use App\Models\Client;
+use App\Models\Report;
+use App\Policies\CampaignPolicy;
+use App\Policies\ClientPolicy;
+use App\Policies\ReportPolicy;
 use App\Repositories\Contracts\CampaignRepositoryInterface;
 use App\Repositories\Contracts\LeadRepositoryInterface;
 use App\Repositories\Eloquent\CampaignRepository;
@@ -13,6 +20,7 @@ use App\Services\MetaAdsService;
 use App\Services\MicrosoftAdsService;
 use App\Services\PinterestAdsService;
 use App\Services\TikTokAdsService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +43,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Gate::before(function ($user): ?bool {
+            return $user->hasRole(UserRole::ADMIN) ? true : null;
+        });
+
+        Gate::policy(Client::class, ClientPolicy::class);
+        Gate::policy(Campaign::class, CampaignPolicy::class);
+        Gate::policy(Report::class, ReportPolicy::class);
     }
 }

@@ -18,7 +18,9 @@ class Organization extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(User::class)
+            ->withPivot(['role', 'client_id'])
+            ->withTimestamps();
     }
 
     public function clients(): HasMany

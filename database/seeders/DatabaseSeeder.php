@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Gestor de Tráfego Senior',
             'email' => 'admin@trafegohub.com',
             'password' => Hash::make('password123'),
-            'role' => 'admin',
+            'role' => 'ADMIN',
             'active_workspace_id' => $workspace->id,
             'active_organization_id' => $organization->id,
         ]);

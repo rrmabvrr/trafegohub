@@ -26,4 +26,14 @@ class Client extends Model
     {
         return $this->hasMany(Workspace::class);
     }
+
+    public function campaigns(): HasMany
+    {
+        return $this->hasManyThrough(Campaign::class, Workspace::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
+    }
 }
