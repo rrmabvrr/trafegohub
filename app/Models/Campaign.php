@@ -13,6 +13,7 @@ class Campaign extends Model
 
     protected $fillable = [
         'workspace_id',
+        'organization_id',
         'integration_id',
         'external_id',
         'platform',
@@ -47,6 +48,11 @@ class Campaign extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function integration(): BelongsTo

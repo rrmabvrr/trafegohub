@@ -12,6 +12,7 @@ class Lead extends Model
 
     protected $fillable = [
         'workspace_id',
+        'organization_id',
         'campaign_id',
         'name',
         'email',
@@ -34,6 +35,11 @@ class Lead extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function campaign(): BelongsTo

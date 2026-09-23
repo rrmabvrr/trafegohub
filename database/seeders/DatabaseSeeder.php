@@ -2,13 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\AutomationRule;
+use App\Models\Campaign;
+use App\Models\Client;
+use App\Models\Creative;
+use App\Models\Integration;
+use App\Models\Lead;
+use App\Models\Organization;
 use App\Models\User;
 use App\Models\Workspace;
-use App\Models\Integration;
-use App\Models\Campaign;
-use App\Models\Creative;
-use App\Models\Lead;
-use App\Models\AutomationRule;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,22 +18,37 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create Workspace
+        $organization = Organization::create([
+            'name' => 'Agência Alfa Marketing',
+            'slug' => 'agencia-alfa-marketing',
+        ]);
+
+        $client = Client::create([
+            'organization_id' => $organization->id,
+            'name' => 'Infoprodutos Master E-commerce',
+        ]);
+
+        // 1. Create Workspace compatibility context
         $workspace = Workspace::create([
             'name' => 'Agência Alfa Marketing',
             'client_name' => 'Infoprodutos Master E-commerce',
+            'organization_id' => $organization->id,
+            'client_id' => $client->id,
             'currency' => 'BRL',
             'timezone' => 'America/Sao_Paulo',
         ]);
 
         // 2. Create Master Admin User
-        User::create([
+        $admin = User::create([
             'name' => 'Gestor de Tráfego Senior',
             'email' => 'admin@trafegohub.com',
             'password' => Hash::make('password123'),
             'role' => 'admin',
             'active_workspace_id' => $workspace->id,
+            'active_organization_id' => $organization->id,
         ]);
+
+        $organization->users()->attach($admin, ['role' => 'owner']);
 
         // 3. Create Integrations
         $metaInt = Integration::create([

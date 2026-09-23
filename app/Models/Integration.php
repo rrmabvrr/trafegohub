@@ -13,6 +13,7 @@ class Integration extends Model
 
     protected $fillable = [
         'workspace_id',
+        'organization_id',
         'platform',
         'name',
         'account_id',
@@ -33,6 +34,11 @@ class Integration extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function campaigns(): HasMany

@@ -13,6 +13,7 @@ class AdSet extends Model
 
     protected $fillable = [
         'campaign_id',
+        'organization_id',
         'external_id',
         'name',
         'status',
@@ -48,6 +49,11 @@ class AdSet extends Model
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function ads(): HasMany

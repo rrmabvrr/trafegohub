@@ -4,30 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Workspace extends Model
+class Organization extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'client_name',
-        'organization_id',
-        'client_id',
-        'currency',
-        'timezone',
+        'slug',
     ];
 
-    public function organization(): BelongsTo
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
     }
 
-    public function client(): BelongsTo
+    public function clients(): HasMany
     {
-        return $this->belongsTo(Client::class);
+        return $this->hasMany(Client::class);
+    }
+
+    public function workspaces(): HasMany
+    {
+        return $this->hasMany(Workspace::class);
     }
 
     public function integrations(): HasMany
@@ -45,8 +46,8 @@ class Workspace extends Model
         return $this->hasMany(Lead::class);
     }
 
-    public function automationRules(): HasMany
+    public function reports(): HasMany
     {
-        return $this->hasMany(AutomationRule::class);
+        return $this->hasMany(Report::class);
     }
 }

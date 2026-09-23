@@ -13,6 +13,7 @@ class AutomationRule extends Model
 
     protected $fillable = [
         'workspace_id',
+        'organization_id',
         'name',
         'platform_filter',
         'metric',
@@ -36,6 +37,11 @@ class AutomationRule extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function logs(): HasMany
