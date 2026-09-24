@@ -21,7 +21,7 @@ class CampaignRepository implements CampaignRepositoryInterface
 
     public function findById(int $id): ?Campaign
     {
-        return Campaign::with(['integration', 'creatives'])->find($id);
+        return Campaign::with(['client', 'integration', 'adSets.ads', 'metricSnapshots', 'creatives'])->find($id);
     }
 
     public function create(array $data): Campaign

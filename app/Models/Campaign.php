@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\CampaignStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Campaign extends Model
 {
@@ -14,6 +16,7 @@ class Campaign extends Model
     protected $fillable = [
         'workspace_id',
         'organization_id',
+        'client_id',
         'integration_id',
         'external_id',
         'platform',
@@ -21,6 +24,7 @@ class Campaign extends Model
         'status',
         'objective',
         'daily_budget',
+        'currency',
         'total_spend',
         'impressions',
         'clicks',
@@ -31,19 +35,27 @@ class Campaign extends Model
         'roas',
         'revenue',
         'start_date',
+        'end_date',
+        'synced_at',
         'target_audience',
     ];
 
-    protected $casts = [
-        'daily_budget' => 'float',
-        'total_spend' => 'float',
-        'ctr' => 'float',
-        'cpc' => 'float',
-        'cpl' => 'float',
-        'roas' => 'float',
-        'revenue' => 'float',
-        'start_date' => 'date',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => CampaignStatus::class,
+            'daily_budget' => 'float',
+            'total_spend' => 'float',
+            'ctr' => 'float',
+            'cpc' => 'float',
+            'cpl' => 'float',
+            'roas' => 'float',
+            'revenue' => 'float',
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'synced_at' => 'datetime',
+        ];
+    }
 
     public function workspace(): BelongsTo
     {
@@ -55,9 +67,19 @@ class Campaign extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function integration(): BelongsTo
     {
         return $this->belongsTo(Integration::class);
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->integration();
     }
 
     public function creatives(): HasMany
@@ -70,6 +92,11 @@ class Campaign extends Model
         return $this->hasMany(AdSet::class);
     }
 
+    public function ads(): HasManyThrough
+    {
+        return $this->hasManyThrough(Ad::class, AdSet::class);
+    }
+
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class);
@@ -79,4 +106,10 @@ class Campaign extends Model
     {
         return $this->hasMany(CampaignMetricSnapshot::class);
     }
+
+    public function metrics(): HasMany
+    {
+        return $this->metricSnapshots();
+    }
 }
+
