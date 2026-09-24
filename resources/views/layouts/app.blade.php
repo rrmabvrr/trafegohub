@@ -62,7 +62,7 @@
                 <!-- Brand Header -->
                 <div class="h-16 flex items-center px-4 border-b border-slate-800/80 gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan to-brand-violet flex items-center justify-center text-slate-950 font-black text-xl shadow-neon-blue flex-shrink-0">
-                        TH
+                        <img src="{{ asset('favicon.svg') }}" alt="TH" class="w-8 h-8">
                     </div>
                     <div x-show="sidebarOpen" class="flex flex-col">
                         <span class="font-extrabold text-lg tracking-tight gradient-text-cyan leading-none">
