@@ -1,58 +1,132 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TrafegoHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+TrafegoHub é uma plataforma de gestão centralizada de mídia paga e campanhas digitais, construída para ajudar equipes de marketing, performance e operação a controlar anúncios, métricas e automações em um único painel.
 
-## About Laravel
+A solução foi pensada para unir gestão de campanhas, indicadores de desempenho, CRM de leads e regras de automação em uma interface moderna, com foco em produtividade e tomada de decisão em tempo real.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Visão geral
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+O projeto centraliza a operação de campanhas em canais como:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Meta Ads
+- Google Ads
+- TikTok Ads
+- LinkedIn Ads
 
-## Learning Laravel
+Com o TrafegoHub, é possível:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- acompanhar desempenho de campanhas em tempo real;
+- visualizar métricas consolidadas em dashboards;
+- gerenciar clientes, campanhas, grupos e criativos;
+- acompanhar leads e relacionamentos com clientes;
+- automatizar regras de avaliação e ações de negócio;
+- manter histórico e snapshots de métricas para análise e relatórios.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Funcionalidades principais
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 1. Gestão de campanhas
+O sistema permite criar e controlar campanhas, ad sets, grupos e anúncios, além de manter organização por cliente e organização de trabalho.
 
-## Agentic Development
+### 2. Dashboard analítico
+A aplicação inclui painéis e relatórios com indicadores-chave de mídia paga, como alcance, cliques, conversões, custo e eficiência.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 3. CRM e leads
+O módulo de leads permite acompanhar registros e integrar a operação comercial com a performance de anúncios.
 
-```bash
-composer require laravel/boost --dev
+### 4. Automação de regras
+Regras automáticas podem avaliar campanhas e disparar processos com base em eventos e métricas, reduzindo trabalho manual e acelerando respostas operacionais.
 
-php artisan boost:install
+### 5. Relatórios e snapshots
+O projeto oferece suporte a relatórios e snapshots de métricas, ajudando a comparar períodos, analisar tendências e facilitar a governança dos dados.
+
+## Tecnologias utilizadas
+
+O TrafegoHub utiliza uma stack moderna com foco em velocidade e escalabilidade:
+
+- PHP 8.4
+- Laravel 12
+- Livewire 3
+- Horizon
+- Vite
+- Tailwind CSS
+- Chart.js
+- Redis
+
+## Estrutura do projeto
+
+```text
+app/
+  DTOs/
+  Http/
+  Jobs/
+  Livewire/
+  Models/
+  Policies/
+  Providers/
+  Repositories/
+  Services/
+bootstrap/
+config/
+ database/
+public/
+resources/
+routes/
+src/
+tests/
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Como rodar localmente
 
-## Contributing
+### Pré-requisitos
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP 8.4+
+- Composer
+- Node.js e npm
+- Banco de dados configurado para o Laravel
+- Redis (quando aplicável para filas e Horizon)
 
-## Code of Conduct
+### Instalação
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+npm install
+npm run build
+php artisan migrate
+php artisan serve
+```
 
-## Security Vulnerabilities
+### Iniciar o ambiente frontend
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run dev
+```
 
-## License
+### Executar filas e monitoramento
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan horizon
+```
+
+## Objetivo do projeto
+
+O TrafegoHub foi criado para centralizar a operação de tráfego pago em uma ferramenta pensada para times que precisam tomar decisões com velocidade, base em dados e organização operacional. A proposta é reduzir a fragmentação de processos e dar uma visão mais clara do desempenho das campanhas e do impacto dos anúncios em negócios reais.
+
+## Créditos
+
+Este projeto foi desenvolvido com base em tecnologias e ecossistemas de código aberto, especialmente:
+
+- [Laravel](https://laravel.com/) — framework principal da aplicação
+- [Livewire](https://livewire.laravel.com/) — interfaces dinâmicas em PHP
+- [Horizon](https://laravel.com/docs/horizon) — monitoramento e filas do Laravel
+- [Vite](https://vitejs.dev/) — build do frontend
+- [Tailwind CSS](https://tailwindcss.com/) — estilização visual
+- [Chart.js](https://www.chartjs.org/) — gráficos e visualização de métricas
+- [Redis](https://redis.io/) — cache e filas
+
+Também agradecemos à comunidade open source e aos mantenedores das bibliotecas que tornam projetos como este possíveis.
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT.
