@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\CampaignMetricSnapshot;
 use App\Models\Client;
 use App\Models\Integration;
+use App\Models\Metric;
 use App\Models\Workspace;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -36,7 +37,7 @@ class Dashboard extends Component
 
     public function triggerSync(): void
     {
-        SyncPlatformMetricsJob::dispatch();
+        SyncPlatformMetricsJob::dispatch()->onQueue('sync');
         $this->dispatch('notify', ['message' => 'Sincronização de métricas solicitada com sucesso.']);
     }
 
@@ -64,13 +65,28 @@ class Dashboard extends Component
         $campaigns = $campaignQuery->with('integration')->withCount('leads')->get();
         $campaignIds = $campaigns->modelKeys();
         [$periodStart, $periodEnd] = $this->period();
-        $snapshots = CampaignMetricSnapshot::whereIn('campaign_id', $campaignIds)
-            ->whereBetween('date', [$periodStart, $periodEnd])
-            ->orderBy('date')
-            ->get();
-        $monthSnapshots = CampaignMetricSnapshot::whereIn('campaign_id', $campaignIds)
-            ->whereBetween('date', [now()->startOfMonth(), now()->endOfDay()])
-            ->get();
+        $campaignRows = $this->campaignTableRows($campaigns, $periodStart, $periodEnd);
+        $platformChartData = $this->platformChartData($campaignRows);
+        $metricQuery = Metric::whereIn('campaign_id', $campaignIds)
+            ->whereBetween('date', [$periodStart, $periodEnd]);
+        $snapshots = $metricQuery->orderBy('date')->get();
+
+        if ($snapshots->isEmpty()) {
+            $snapshots = CampaignMetricSnapshot::whereIn('campaign_id', $campaignIds)
+                ->whereBetween('date', [$periodStart, $periodEnd])
+                ->orderBy('date')
+                ->get();
+        }
+
+        $monthMetricQuery = Metric::whereIn('campaign_id', $campaignIds)
+            ->whereBetween('date', [now()->startOfMonth(), now()->endOfDay()]);
+        $monthSnapshots = $monthMetricQuery->get();
+
+        if ($monthSnapshots->isEmpty()) {
+            $monthSnapshots = CampaignMetricSnapshot::whereIn('campaign_id', $campaignIds)
+                ->whereBetween('date', [now()->startOfMonth(), now()->endOfDay()])
+                ->get();
+        }
         $metrics = $this->metrics($snapshots, $campaigns);
         $todayMetrics = $this->metrics(
             $snapshots->where('date', Carbon::today()),
@@ -94,6 +110,8 @@ class Dashboard extends Component
             'todayMetrics' => $todayMetrics,
             'monthMetrics' => $monthMetrics,
             'chartData' => $chartData,
+            'platformChartData' => $platformChartData,
+            'campaignRows' => $campaignRows,
             'topCampaigns' => $topCampaigns,
             'integrations' => $integrations,
             'clients' => $clients,
@@ -101,6 +119,48 @@ class Dashboard extends Component
             'periodStart' => $periodStart,
             'periodEnd' => $periodEnd,
         ])->layout('layouts.app');
+    }
+
+    private function campaignTableRows(Collection $campaigns, Carbon $periodStart, Carbon $periodEnd): Collection
+    {
+        return $campaigns->map(function (Campaign $campaign) use ($periodStart, $periodEnd): array {
+            $metrics = Metric::query()
+                ->where('campaign_id', $campaign->id)
+                ->whereBetween('date', [$periodStart, $periodEnd])
+                ->get();
+
+            $spend = (float) $metrics->sum('spend');
+            $revenue = (float) $metrics->sum('revenue');
+            $impressions = (int) $metrics->sum('impressions');
+            $clicks = (int) $metrics->sum('clicks');
+            $leads = (int) $metrics->sum('leads');
+            $ctr = $impressions > 0 ? ($clicks / $impressions) * 100 : 0;
+            $cpl = $leads > 0 ? $spend / $leads : 0;
+            $roas = $spend > 0 ? $revenue / $spend : 0;
+            $status = $roas >= 2 ? 'Bom' : ($roas >= 1 ? 'Ativo' : 'Atenção');
+
+            return [
+                'campaign_name' => $campaign->name,
+                'platform' => strtoupper((string) ($campaign->platform ?? 'N/D')),
+                'spend' => $spend,
+                'leads' => $leads,
+                'cpl' => $cpl,
+                'ctr' => $ctr,
+                'roas' => $roas,
+                'status' => $status,
+            ];
+        });
+    }
+
+    private function platformChartData(Collection $campaignRows): array
+    {
+        $grouped = $campaignRows->groupBy('platform');
+
+        return [
+            'labels' => $grouped->keys()->values()->all(),
+            'spend' => $grouped->map(fn (Collection $items) => round((float) $items->sum('spend'), 2))->values()->all(),
+            'leads' => $grouped->map(fn (Collection $items) => (int) $items->sum('leads'))->values()->all(),
+        ];
     }
 
     /** @return array{0: Carbon, 1: Carbon} */

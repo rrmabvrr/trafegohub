@@ -59,4 +59,16 @@ return [
         ],
     ],
 
+    'webhooks' => [
+        'meta' => [
+            'secret' => env('META_WEBHOOK_SECRET'),
+        ],
+        'google' => [
+            'secret' => env('GOOGLE_WEBHOOK_SECRET'),
+        ],
+        'tiktok' => [
+            'secret' => env('TIKTOK_WEBHOOK_SECRET'),
+        ],
+    ],
+
 ];

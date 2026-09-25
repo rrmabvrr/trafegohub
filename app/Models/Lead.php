@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeadStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,26 +12,42 @@ class Lead extends Model
     use HasFactory;
 
     protected $fillable = [
+        'client_id',
         'workspace_id',
         'organization_id',
         'campaign_id',
+        'ad_id',
+        'ad_set_id',
         'name',
-        'email',
         'phone',
+        'email',
+        'source',
+        'origin',
         'platform',
-        'utm_source',
-        'utm_medium',
-        'utm_campaign',
-        'cpl',
-        'deal_value',
+        'channel',
+        'campaign_name',
+        'ad_name',
+        'form_id',
+        'external_lead_id',
         'status',
-        'city',
+        'lead_date',
+        'observations',
+        'metadata',
     ];
 
-    protected $casts = [
-        'cpl' => 'float',
-        'deal_value' => 'float',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => LeadStatus::class,
+            'lead_date' => 'datetime',
+            'metadata' => 'array',
+        ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
 
     public function workspace(): BelongsTo
     {
@@ -45,5 +62,15 @@ class Lead extends Model
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function ad(): BelongsTo
+    {
+        return $this->belongsTo(Ad::class);
+    }
+
+    public function adSet(): BelongsTo
+    {
+        return $this->belongsTo(AdSet::class);
     }
 }

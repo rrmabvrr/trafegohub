@@ -112,6 +112,45 @@ class MetaAdsSyncTest extends TestCase
         $this->assertSame(0, Ad::count());
     }
 
+    public function test_it_supports_unified_ad_set_fields_for_all_platforms(): void
+    {
+        $campaign = Campaign::create([
+            'workspace_id' => Workspace::create([
+                'name' => 'Client workspace',
+                'client_name' => 'Client',
+            ])->id,
+            'platform' => 'google',
+            'name' => 'Campanha teste',
+            'status' => 'ACTIVE',
+            'objective' => 'LEADS',
+            'daily_budget' => 120,
+            'external_id' => 'campaign-999',
+        ]);
+
+        $adSet = AdSet::create([
+            'campaign_id' => $campaign->id,
+            'external_id' => 'adset-999',
+            'name' => 'Grupo de anúncios',
+            'status' => 'ACTIVE',
+            'daily_budget' => 75,
+            'budget' => 75,
+            'strategy' => 'MAXIMIZE_CONVERSIONS',
+            'audience' => 'Usuários de interesse em performance',
+            'placements' => ['Search', 'Display'],
+            'synced_at' => now(),
+        ]);
+
+        $this->assertSame(75.0, $adSet->budget);
+        $this->assertSame('MAXIMIZE_CONVERSIONS', $adSet->strategy);
+        $this->assertSame('Usuários de interesse em performance', $adSet->audience);
+        $this->assertSame(['Search', 'Display'], $adSet->placements);
+        $this->assertDatabaseHas('ad_sets', [
+            'external_id' => 'adset-999',
+            'strategy' => 'MAXIMIZE_CONVERSIONS',
+            'audience' => 'Usuários de interesse em performance',
+        ]);
+    }
+
     public function test_it_updates_meta_campaign_status_through_the_official_api(): void
     {
         Http::preventStrayRequests();

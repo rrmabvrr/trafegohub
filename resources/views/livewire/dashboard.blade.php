@@ -4,8 +4,8 @@
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-semibold mb-2">
                 Central de inteligência de tráfego pago
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">Dashboard de performance</h1>
-            <p class="text-xs sm:text-sm text-slate-400 mt-1">Métricas consolidadas por período, cliente, plataforma, conta e campanha.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">Dashboard principal</h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">Resumo executivo por investimento, geração de leads, eficiência de custo e desempenho por plataforma.</p>
         </div>
 
         <button wire:click="triggerSync" wire:loading.attr="disabled" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-cyan via-blue-600 to-brand-violet text-slate-950 font-bold text-xs shadow-neon-blue hover:brightness-110 transition disabled:opacity-50">
@@ -37,45 +37,93 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         @php
             $cards = [
-                ['label' => 'Investimento total', 'value' => 'R$ '.number_format($metrics['spend'], 2, ',', '.'), 'tone' => 'text-slate-100'],
-                ['label' => 'Investimento hoje', 'value' => 'R$ '.number_format($todayMetrics['spend'], 2, ',', '.'), 'tone' => 'text-cyan-300'],
-                ['label' => 'Investimento no mês', 'value' => 'R$ '.number_format($monthMetrics['spend'], 2, ',', '.'), 'tone' => 'text-blue-300'],
-                ['label' => 'Leads', 'value' => number_format($metrics['leads']), 'tone' => 'text-amber-300'],
-                ['label' => 'Conversões', 'value' => number_format($metrics['conversions']), 'tone' => 'text-emerald-300'],
-                ['label' => 'CPL', 'value' => 'R$ '.number_format($metrics['cpl'], 2, ',', '.'), 'tone' => 'text-slate-100'],
-                ['label' => 'CPC', 'value' => 'R$ '.number_format($metrics['cpc'], 2, ',', '.'), 'tone' => 'text-slate-100'],
-                ['label' => 'CPM', 'value' => 'R$ '.number_format($metrics['cpm'], 2, ',', '.'), 'tone' => 'text-slate-100'],
-                ['label' => 'CTR', 'value' => number_format($metrics['ctr'], 2, ',', '.').'%', 'tone' => 'text-violet-300'],
-                ['label' => 'ROAS', 'value' => number_format($metrics['roas'], 2, ',', '.').'x', 'tone' => 'text-emerald-300'],
-                ['label' => 'Impressões', 'value' => number_format($metrics['impressions']), 'tone' => 'text-slate-100'],
-                ['label' => 'Alcance', 'value' => number_format($metrics['reach']), 'tone' => 'text-slate-100'],
-                ['label' => 'Cliques', 'value' => number_format($metrics['clicks']), 'tone' => 'text-slate-100'],
+                ['label' => 'Investimento', 'value' => 'R$ '.number_format((float) $metrics['spend'], 2, ',', '.'), 'tone' => 'text-slate-100'],
+                ['label' => 'Leads', 'value' => number_format((int) $metrics['leads'], 0, ',', '.'), 'tone' => 'text-brand-cyan'],
+                ['label' => 'CPL', 'value' => 'R$ '.number_format((float) $metrics['cpl'], 2, ',', '.'), 'tone' => 'text-slate-100'],
+                ['label' => 'Conversões', 'value' => number_format((int) $metrics['conversions'], 0, ',', '.'), 'tone' => 'text-emerald-300'],
+                ['label' => 'ROAS', 'value' => number_format((float) $metrics['roas'], 2, ',', '.').'x', 'tone' => 'text-violet-300'],
             ];
         @endphp
+
         @foreach($cards as $card)
-            <div class="glass-panel-interactive p-5 rounded-2xl"><span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">{{ $card['label'] }}</span><div class="text-2xl font-extrabold {{ $card['tone'] }}">{{ $card['value'] }}</div></div>
+            <div class="glass-panel-interactive p-5 rounded-2xl">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">{{ $card['label'] }}</div>
+                <div class="text-2xl font-extrabold {{ $card['tone'] }}">{{ $card['value'] }}</div>
+            </div>
         @endforeach
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <div class="glass-panel p-5 rounded-2xl border border-slate-800 xl:col-span-2" wire:ignore>
-            <div class="flex items-center justify-between mb-4"><div><h2 class="text-base font-bold text-slate-100">Investimento e receita</h2><p class="text-xs text-slate-500">Série diária do período selecionado</p></div><span class="text-[10px] text-slate-500">{{ $periodStart->format('d/m/Y') }} - {{ $periodEnd->format('d/m/Y') }}</span></div>
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 xl:col-span-1" wire:ignore>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100">Investimento por período</h2>
+                    <p class="text-xs text-slate-500">Série diária</p>
+                </div>
+                <span class="text-[10px] text-slate-500">{{ $periodStart->format('d/m/Y') }} - {{ $periodEnd->format('d/m/Y') }}</span>
+            </div>
             <div class="h-64" x-data="dashboardChart(@js($chartData))" x-init="init()"><canvas x-ref="canvas"></canvas></div>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-slate-800" wire:ignore>
-            <h2 class="text-base font-bold text-slate-100 mb-1">Leads por dia</h2><p class="text-xs text-slate-500 mb-4">Distribuição no período filtrado</p>
+
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 xl:col-span-1" wire:ignore>
+            <h2 class="text-base font-bold text-slate-100 mb-1">Leads por período</h2>
+            <p class="text-xs text-slate-500 mb-4">Distribuição no período</p>
             <div class="h-64" x-data="dashboardLeadsChart(@js($chartData))" x-init="init()"><canvas x-ref="canvas"></canvas></div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 xl:col-span-1" wire:ignore>
+            <h2 class="text-base font-bold text-slate-100 mb-1">Desempenho por plataforma</h2>
+            <p class="text-xs text-slate-500 mb-4">Investimento e geração de leads</p>
+            <div class="h-64" x-data="dashboardPlatformChart(@js($platformChartData))" x-init="init()"><canvas x-ref="canvas"></canvas></div>
         </div>
     </div>
 
     <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-        <h2 class="text-base font-bold text-slate-100 mb-4">Campanhas com maior ROAS</h2>
-        <div class="overflow-x-auto rounded-xl border border-slate-800"><table class="w-full text-left text-xs"><thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800"><tr><th class="px-4 py-3">Plataforma e campanha</th><th class="px-4 py-3">Investido</th><th class="px-4 py-3">Cliques</th><th class="px-4 py-3">Conversões</th><th class="px-4 py-3">ROAS</th></tr></thead><tbody class="divide-y divide-slate-800 text-slate-300">
-            @foreach($topCampaigns as $campaign)<tr class="hover:bg-slate-800/40"><td class="px-4 py-3"><span class="font-bold text-slate-100 uppercase text-[10px] bg-slate-800 px-2 py-0.5 rounded mr-2">{{ $campaign->platform }}</span>{{ $campaign->name }}</td><td class="px-4 py-3">R$ {{ number_format($campaign->total_spend, 2, ',', '.') }}</td><td class="px-4 py-3">{{ number_format($campaign->clicks) }}</td><td class="px-4 py-3 font-bold">{{ number_format($campaign->conversions) }}</td><td class="px-4 py-3 text-emerald-300 font-bold">{{ number_format($campaign->roas, 2, ',', '.') }}x</td></tr>@endforeach
-        </tbody></table></div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-slate-100">Campanhas</h2>
+            <span class="text-xs text-slate-400">{{ $campaignRows->count() }} registros</span>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="min-w-full text-left text-xs text-slate-200">
+                <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                    <tr>
+                        <th class="px-4 py-3">Campanha</th>
+                        <th class="px-4 py-3">Plataforma</th>
+                        <th class="px-4 py-3">Investimento</th>
+                        <th class="px-4 py-3">Leads</th>
+                        <th class="px-4 py-3">CPL</th>
+                        <th class="px-4 py-3">CTR</th>
+                        <th class="px-4 py-3">ROAS</th>
+                        <th class="px-4 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                    @foreach($campaignRows as $row)
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="px-4 py-3 font-medium text-slate-100">{{ $row['campaign_name'] }}</td>
+                            <td class="px-4 py-3">{{ $row['platform'] }}</td>
+                            <td class="px-4 py-3">R$ {{ number_format((float) $row['spend'], 2, ',', '.') }}</td>
+                            <td class="px-4 py-3">{{ number_format((int) $row['leads'], 0, ',', '.') }}</td>
+                            <td class="px-4 py-3">R$ {{ number_format((float) $row['cpl'], 2, ',', '.') }}</td>
+                            <td class="px-4 py-3">{{ number_format((float) $row['ctr'], 2, ',', '.') }}%</td>
+                            <td class="px-4 py-3 text-emerald-300 font-bold">{{ number_format((float) $row['roas'], 2, ',', '.') }}x</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex rounded-full border px-2 py-1 text-[10px] font-semibold
+                                    @if($row['status'] === 'Bom') border-emerald-400/40 bg-emerald-500/10 text-emerald-300
+                                    @elseif($row['status'] === 'Ativo') border-brand-cyan/40 bg-brand-cyan/10 text-brand-cyan
+                                    @else border-amber-400/40 bg-amber-500/10 text-amber-300 @endif">
+                                    {{ $row['status'] }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 
     @script

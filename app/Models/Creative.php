@@ -14,9 +14,17 @@ class Creative extends Model
     protected $fillable = [
         'campaign_id',
         'organization_id',
+        'external_id',
         'name',
         'type',
         'platform',
+        'status',
+        'title',
+        'description',
+        'url',
+        'image_url',
+        'video_url',
+        'cta',
         'thumbnail_url',
         'ctr',
         'hook_rate',
@@ -26,6 +34,7 @@ class Creative extends Model
         'fatigue_level',
         'fatigue_reason',
         'frequency',
+        'synced_at',
     ];
 
     protected $casts = [
@@ -34,6 +43,7 @@ class Creative extends Model
         'roas' => 'float',
         'spend' => 'float',
         'frequency' => 'float',
+        'synced_at' => 'datetime',
     ];
 
     public function campaign(): BelongsTo

@@ -10,20 +10,37 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
-            $table->foreignId('campaign_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('workspace_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('organization_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('campaign_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('ad_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('ad_set_id')->nullable()->constrained('ad_sets')->nullOnDelete();
+
             $table->string('name');
-            $table->string('email');
             $table->string('phone')->nullable();
-            $table->enum('platform', ['meta', 'google', 'tiktok', 'linkedin', 'kwai'])->default('meta');
-            $table->string('utm_source')->nullable();
-            $table->string('utm_medium')->nullable();
-            $table->string('utm_campaign')->nullable();
-            $table->decimal('cpl', 8, 2)->default(0.00);
-            $table->decimal('deal_value', 12, 2)->default(0.00);
-            $table->enum('status', ['NEW', 'CONTACTED', 'QUALIFIED', 'CONVERTED', 'LOST'])->default('NEW');
-            $table->string('city')->nullable();
+            $table->string('email')->nullable();
+
+            $table->string('source')->nullable()->comment('Ex: WhatsApp, CRM, formulário, Meta Leads, Google Leads');
+            $table->string('origin')->nullable()->comment('Origem da captação do lead');
+            $table->string('platform')->nullable();
+            $table->string('channel')->nullable();
+            $table->string('campaign_name')->nullable();
+            $table->string('ad_name')->nullable();
+            $table->string('form_id')->nullable();
+            $table->string('external_lead_id')->nullable();
+
+            $table->timestamp('lead_date')->nullable();
+            $table->enum('status', ['novo', 'contato', 'negociacao', 'convertido', 'perdido'])->default('novo');
+            $table->text('observations')->nullable();
+            $table->json('metadata')->nullable();
+
             $table->timestamps();
+
+            $table->index(['workspace_id', 'status']);
+            $table->index(['client_id', 'status']);
+            $table->index(['platform', 'lead_date']);
+            $table->index(['campaign_id', 'status']);
         });
     }
 

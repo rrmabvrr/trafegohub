@@ -17,6 +17,12 @@ class Ad extends Model
         'external_id',
         'name',
         'status',
+        'title',
+        'description',
+        'url',
+        'image_url',
+        'video_url',
+        'cta',
         'total_spend',
         'impressions',
         'clicks',
@@ -26,6 +32,7 @@ class Ad extends Model
         'conversions',
         'roas',
         'revenue',
+        'synced_at',
     ];
 
     protected function casts(): array
@@ -37,6 +44,7 @@ class Ad extends Model
             'cpl' => 'float',
             'roas' => 'float',
             'revenue' => 'float',
+            'synced_at' => 'datetime',
         ];
     }
 

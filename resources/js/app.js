@@ -44,4 +44,29 @@ document.addEventListener('alpine:init', () => {
 			});
 		},
 	}));
+
+	Alpine.data('dashboardPlatformChart', (data) => ({
+		chart: null,
+		init() {
+			this.chart = new Chart(this.$refs.canvas, {
+				type: 'doughnut',
+				data: {
+					labels: data.labels,
+					datasets: [{
+						label: 'Investimento',
+						data: data.spend,
+						backgroundColor: ['#00f2fe', '#a78bfa', '#34d399', '#fbbf24', '#f472b6', '#60a5fa'],
+						borderWidth: 0,
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12 } }
+					}
+				}
+			});
+		},
+	}));
 });

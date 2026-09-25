@@ -18,6 +18,10 @@ class AdSet extends Model
         'name',
         'status',
         'daily_budget',
+        'budget',
+        'strategy',
+        'audience',
+        'placements',
         'total_spend',
         'impressions',
         'clicks',
@@ -29,12 +33,14 @@ class AdSet extends Model
         'revenue',
         'start_date',
         'end_date',
+        'synced_at',
     ];
 
     protected function casts(): array
     {
         return [
             'daily_budget' => 'float',
+            'budget' => 'float',
             'total_spend' => 'float',
             'ctr' => 'float',
             'cpc' => 'float',
@@ -43,6 +49,8 @@ class AdSet extends Model
             'revenue' => 'float',
             'start_date' => 'date',
             'end_date' => 'date',
+            'placements' => 'array',
+            'synced_at' => 'datetime',
         ];
     }
 
