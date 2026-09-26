@@ -9,18 +9,38 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ad_sets', function (Blueprint $table): void {
-            $table->decimal('budget', 12, 2)->nullable()->after('daily_budget');
-            $table->string('strategy')->nullable()->after('budget');
-            $table->text('audience')->nullable()->after('strategy');
-            $table->json('placements')->nullable()->after('audience');
-            $table->timestamp('synced_at')->nullable()->after('placements');
+            if (! Schema::hasColumn('ad_sets', 'budget')) {
+                $table->decimal('budget', 12, 2)->nullable()->after('daily_budget');
+            }
+
+            if (! Schema::hasColumn('ad_sets', 'strategy')) {
+                $table->string('strategy')->nullable()->after('budget');
+            }
+
+            if (! Schema::hasColumn('ad_sets', 'audience')) {
+                $table->text('audience')->nullable()->after('strategy');
+            }
+
+            if (! Schema::hasColumn('ad_sets', 'placements')) {
+                $table->json('placements')->nullable()->after('audience');
+            }
+
+            if (! Schema::hasColumn('ad_sets', 'synced_at')) {
+                $table->timestamp('synced_at')->nullable()->after('placements');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('ad_sets', function (Blueprint $table): void {
-            $table->dropColumn(['budget', 'strategy', 'audience', 'placements', 'synced_at']);
+            $columns = ['budget', 'strategy', 'audience', 'placements', 'synced_at'];
+
+            foreach ($columns as $column) {
+                if (Schema::hasColumn('ad_sets', $column)) {
+                    $table->dropColumn($column);
+                }
+            }
         });
     }
 };

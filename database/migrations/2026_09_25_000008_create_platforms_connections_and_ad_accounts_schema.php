@@ -162,8 +162,13 @@ return new class extends Migration
                 $table->foreignId('ad_group_id')->nullable()->after('ad_id')->constrained()->nullOnDelete();
             }
 
-            $table->index(['organization_id', 'lead_date']);
-            $table->index(['platform_id', 'lead_date']);
+            if (! Schema::hasIndex('leads', ['organization_id', 'lead_date'])) {
+                $table->index(['organization_id', 'lead_date']);
+            }
+
+            if (! Schema::hasIndex('leads', ['platform_id', 'lead_date'])) {
+                $table->index(['platform_id', 'lead_date']);
+            }
         });
 
         Schema::table('sync_logs', function (Blueprint $table): void {
@@ -175,7 +180,9 @@ return new class extends Migration
                 $table->foreignId('ad_account_id')->nullable()->after('connection_id')->constrained()->nullOnDelete();
             }
 
-            $table->index(['organization_id', 'status', 'started_at']);
+            if (! Schema::hasIndex('sync_logs', ['organization_id', 'status', 'started_at'])) {
+                $table->index(['organization_id', 'status', 'started_at']);
+            }
         });
 
         Schema::table('webhook_events', function (Blueprint $table): void {
@@ -191,16 +198,25 @@ return new class extends Migration
                 $table->foreignId('platform_id')->nullable()->after('connection_id')->constrained()->nullOnDelete();
             }
 
-            $table->index(['organization_id', 'status']);
-            $table->index(['platform_id', 'created_at']);
+            if (! Schema::hasIndex('webhook_events', ['organization_id', 'status'])) {
+                $table->index(['organization_id', 'status']);
+            }
+
+            if (! Schema::hasIndex('webhook_events', ['platform_id', 'created_at'])) {
+                $table->index(['platform_id', 'created_at']);
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('webhook_events', function (Blueprint $table): void {
-            $table->dropIndex(['organization_id', 'status']);
-            $table->dropIndex(['platform_id', 'created_at']);
+            if (Schema::hasIndex('webhook_events', ['organization_id', 'status'])) {
+                $table->dropIndex(['organization_id', 'status']);
+            }
+            if (Schema::hasIndex('webhook_events', ['platform_id', 'created_at'])) {
+                $table->dropIndex(['platform_id', 'created_at']);
+            }
             if (Schema::hasColumn('webhook_events', 'organization_id')) {
                 $table->dropConstrainedForeignId('organization_id');
             }
@@ -213,7 +229,9 @@ return new class extends Migration
         });
 
         Schema::table('sync_logs', function (Blueprint $table): void {
-            $table->dropIndex(['organization_id', 'status', 'started_at']);
+            if (Schema::hasIndex('sync_logs', ['organization_id', 'status', 'started_at'])) {
+                $table->dropIndex(['organization_id', 'status', 'started_at']);
+            }
             if (Schema::hasColumn('sync_logs', 'connection_id')) {
                 $table->dropConstrainedForeignId('connection_id');
             }
@@ -223,8 +241,12 @@ return new class extends Migration
         });
 
         Schema::table('leads', function (Blueprint $table): void {
-            $table->dropIndex(['organization_id', 'lead_date']);
-            $table->dropIndex(['platform_id', 'lead_date']);
+            if (Schema::hasIndex('leads', ['organization_id', 'lead_date'])) {
+                $table->dropIndex(['organization_id', 'lead_date']);
+            }
+            if (Schema::hasIndex('leads', ['platform_id', 'lead_date'])) {
+                $table->dropIndex(['platform_id', 'lead_date']);
+            }
             if (Schema::hasColumn('leads', 'connection_id')) {
                 $table->dropConstrainedForeignId('connection_id');
             }
@@ -237,10 +259,18 @@ return new class extends Migration
         });
 
         Schema::table('metrics', function (Blueprint $table): void {
-            $table->dropIndex(['organization_id', 'client_id', 'date']);
-            $table->dropIndex(['platform_id', 'date']);
-            $table->dropIndex(['ad_account_id', 'date']);
-            $table->dropIndex(['campaign_id', 'date']);
+            if (Schema::hasIndex('metrics', ['organization_id', 'client_id', 'date'])) {
+                $table->dropIndex(['organization_id', 'client_id', 'date']);
+            }
+            if (Schema::hasIndex('metrics', ['platform_id', 'date'])) {
+                $table->dropIndex(['platform_id', 'date']);
+            }
+            if (Schema::hasIndex('metrics', ['ad_account_id', 'date'])) {
+                $table->dropIndex(['ad_account_id', 'date']);
+            }
+            if (Schema::hasIndex('metrics', ['campaign_id', 'date'])) {
+                $table->dropIndex(['campaign_id', 'date']);
+            }
             if (Schema::hasColumn('metrics', 'connection_id')) {
                 $table->dropConstrainedForeignId('connection_id');
             }

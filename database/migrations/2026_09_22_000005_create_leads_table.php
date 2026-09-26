@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('client_id')->nullable();
             $table->foreignId('workspace_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('organization_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('campaign_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('ad_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('ad_set_id')->nullable()->constrained('ad_sets')->nullOnDelete();
+            $table->unsignedBigInteger('organization_id')->nullable();
+            $table->unsignedBigInteger('campaign_id')->nullable();
+            $table->unsignedBigInteger('ad_id')->nullable();
+            $table->unsignedBigInteger('ad_set_id')->nullable();
 
             $table->string('name');
             $table->string('phone')->nullable();
