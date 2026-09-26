@@ -16,6 +16,8 @@ class SyncLog extends Model
         'organization_id',
         'workspace_id',
         'integration_id',
+        'connection_id',
+        'ad_account_id',
         'platform',
         'account_name',
         'date',
@@ -49,5 +51,15 @@ class SyncLog extends Model
     public function integration(): BelongsTo
     {
         return $this->belongsTo(Integration::class);
+    }
+
+    public function connection(): BelongsTo
+    {
+        return $this->belongsTo(Connection::class);
+    }
+
+    public function adAccount(): BelongsTo
+    {
+        return $this->belongsTo(AdAccount::class);
     }
 }

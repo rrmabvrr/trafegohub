@@ -17,9 +17,13 @@ class Metric extends Model
         'workspace_id',
         'client_id',
         'integration_id',
+        'connection_id',
+        'ad_account_id',
+        'platform_id',
         'campaign_id',
         'ad_set_id',
         'ad_id',
+        'creative_id',
         'platform',
         'account_name',
         'date',
@@ -79,6 +83,21 @@ class Metric extends Model
         return $this->belongsTo(Integration::class);
     }
 
+    public function connection(): BelongsTo
+    {
+        return $this->belongsTo(Connection::class);
+    }
+
+    public function adAccount(): BelongsTo
+    {
+        return $this->belongsTo(AdAccount::class);
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
@@ -92,5 +111,10 @@ class Metric extends Model
     public function ad(): BelongsTo
     {
         return $this->belongsTo(Ad::class);
+    }
+
+    public function creative(): BelongsTo
+    {
+        return $this->belongsTo(Creative::class);
     }
 }

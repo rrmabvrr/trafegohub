@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'platforms' => [
+        'meta' => [
+            'enabled' => env('ADVERTISING_META_ENABLED', false),
+            'app_id' => env('ADVERTISING_META_APP_ID'),
+            'app_secret' => env('ADVERTISING_META_APP_SECRET'),
+            'access_token' => env('ADVERTISING_META_ACCESS_TOKEN'),
+            'account_id' => env('ADVERTISING_META_ACCOUNT_ID'),
+            'default_currency' => env('ADVERTISING_META_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_META_BASE_URL', 'https://graph.facebook.com/v21.0'),
+        ],
+        'google' => [
+            'enabled' => env('ADVERTISING_GOOGLE_ENABLED', false),
+            'developer_token' => env('ADVERTISING_GOOGLE_DEVELOPER_TOKEN'),
+            'client_id' => env('ADVERTISING_GOOGLE_CLIENT_ID'),
+            'client_secret' => env('ADVERTISING_GOOGLE_CLIENT_SECRET'),
+            'refresh_token' => env('ADVERTISING_GOOGLE_REFRESH_TOKEN'),
+            'customer_id' => env('ADVERTISING_GOOGLE_CUSTOMER_ID'),
+            'default_currency' => env('ADVERTISING_GOOGLE_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_GOOGLE_BASE_URL', 'https://googleads.googleapis.com'),
+        ],
+        'tiktok' => [
+            'enabled' => env('ADVERTISING_TIKTOK_ENABLED', false),
+            'app_id' => env('ADVERTISING_TIKTOK_APP_ID'),
+            'app_secret' => env('ADVERTISING_TIKTOK_APP_SECRET'),
+            'access_token' => env('ADVERTISING_TIKTOK_ACCESS_TOKEN'),
+            'advertiser_id' => env('ADVERTISING_TIKTOK_ADVERTISER_ID'),
+            'default_currency' => env('ADVERTISING_TIKTOK_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_TIKTOK_BASE_URL', 'https://business-api.tiktok.com/open_api'),
+        ],
+        'linkedin' => [
+            'enabled' => env('ADVERTISING_LINKEDIN_ENABLED', false),
+            'client_id' => env('ADVERTISING_LINKEDIN_CLIENT_ID'),
+            'client_secret' => env('ADVERTISING_LINKEDIN_CLIENT_SECRET'),
+            'access_token' => env('ADVERTISING_LINKEDIN_ACCESS_TOKEN'),
+            'account_id' => env('ADVERTISING_LINKEDIN_ACCOUNT_ID'),
+            'default_currency' => env('ADVERTISING_LINKEDIN_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_LINKEDIN_BASE_URL', 'https://api.linkedin.com'),
+        ],
+        'microsoft' => [
+            'enabled' => env('ADVERTISING_MICROSOFT_ENABLED', false),
+            'client_id' => env('ADVERTISING_MICROSOFT_CLIENT_ID'),
+            'client_secret' => env('ADVERTISING_MICROSOFT_CLIENT_SECRET'),
+            'access_token' => env('ADVERTISING_MICROSOFT_ACCESS_TOKEN'),
+            'customer_id' => env('ADVERTISING_MICROSOFT_CUSTOMER_ID'),
+            'default_currency' => env('ADVERTISING_MICROSOFT_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_MICROSOFT_BASE_URL', 'https://api.ads.microsoft.com'),
+        ],
+        'pinterest' => [
+            'enabled' => env('ADVERTISING_PINTEREST_ENABLED', false),
+            'app_id' => env('ADVERTISING_PINTEREST_APP_ID'),
+            'app_secret' => env('ADVERTISING_PINTEREST_APP_SECRET'),
+            'access_token' => env('ADVERTISING_PINTEREST_ACCESS_TOKEN'),
+            'advertiser_id' => env('ADVERTISING_PINTEREST_ADVERTISER_ID'),
+            'default_currency' => env('ADVERTISING_PINTEREST_DEFAULT_CURRENCY', 'USD'),
+            'base_url' => env('ADVERTISING_PINTEREST_BASE_URL', 'https://api.pinterest.com/v5'),
+        ],
+    ],
+];

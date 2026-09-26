@@ -15,7 +15,10 @@ class Lead extends Model
         'client_id',
         'workspace_id',
         'organization_id',
+        'connection_id',
+        'platform_id',
         'campaign_id',
+        'ad_group_id',
         'ad_id',
         'ad_set_id',
         'name',
@@ -59,9 +62,24 @@ class Lead extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function connection(): BelongsTo
+    {
+        return $this->belongsTo(Connection::class);
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function adGroup(): BelongsTo
+    {
+        return $this->belongsTo(AdGroup::class);
     }
 
     public function ad(): BelongsTo

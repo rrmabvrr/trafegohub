@@ -11,6 +11,9 @@ class WebhookEvent extends Model
     use HasFactory;
 
     protected $fillable = [
+        'organization_id',
+        'connection_id',
+        'platform_id',
         'platform',
         'event_type',
         'provider_event_id',
@@ -33,6 +36,21 @@ class WebhookEvent extends Model
             'processed_at' => 'datetime',
             'retry_count' => 'integer',
         ];
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function connection()
+    {
+        return $this->belongsTo(Connection::class);
+    }
+
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
     }
 
     public function failures(): HasMany

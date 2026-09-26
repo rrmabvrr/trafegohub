@@ -35,8 +35,13 @@ return new class extends Migration
         });
 
         Schema::table('workspaces', function (Blueprint $table): void {
-            $table->foreignId('organization_id')->nullable()->after('id')->constrained()->nullOnDelete();
-            $table->foreignId('client_id')->nullable()->after('organization_id')->constrained()->nullOnDelete();
+            if (! Schema::hasColumn('workspaces', 'organization_id')) {
+                $table->foreignId('organization_id')->nullable()->after('id')->constrained()->nullOnDelete();
+            }
+
+            if (! Schema::hasColumn('workspaces', 'client_id')) {
+                $table->foreignId('client_id')->nullable()->after('organization_id')->constrained()->nullOnDelete();
+            }
         });
 
         $this->backfillOrganizations();
@@ -114,7 +119,11 @@ return new class extends Migration
             'ads',
             'automation_logs',
         ] as $tableName) {
-            Schema::table($tableName, function (Blueprint $table): void {
+            Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                if (Schema::hasColumn($tableName, 'organization_id')) {
+                    return;
+                }
+
                 $table->foreignId('organization_id')->nullable()->after('id')->constrained()->nullOnDelete();
             });
         }
@@ -151,7 +160,9 @@ return new class extends Migration
     private function backfillUsers(): void
     {
         Schema::table('users', function (Blueprint $table): void {
-            $table->foreignId('active_organization_id')->nullable()->after('active_workspace_id')->constrained('organizations')->nullOnDelete();
+            if (! Schema::hasColumn('users', 'active_organization_id')) {
+                $table->foreignId('active_organization_id')->nullable()->after('active_workspace_id')->constrained('organizations')->nullOnDelete();
+            }
         });
 
         foreach (DB::table('users')->get(['id', 'active_workspace_id']) as $user) {

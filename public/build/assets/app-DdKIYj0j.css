@@ -2023,6 +2023,14 @@
     border-color: #0000;
   }
 
+  .bg-\[\#0b1118\]\/90 {
+    background-color: oklab(17.4972% -.00518447 -.0165876 / .9);
+  }
+
+  .bg-\[\#0b1118\]\/95 {
+    background-color: oklab(17.4972% -.00518447 -.0165876 / .95);
+  }
+
   .bg-\[\#1b1b18\] {
     background-color: #1b1b18;
   }
@@ -2360,6 +2368,16 @@
   @supports (color: color-mix(in lab, red, red)) {
     .bg-slate-900\/80 {
       background-color: color-mix(in oklab, var(--color-slate-900) 80%, transparent);
+    }
+  }
+
+  .bg-slate-900\/90 {
+    background-color: #0f172be6;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-slate-900\/90 {
+      background-color: color-mix(in oklab, var(--color-slate-900) 90%, transparent);
     }
   }
 
@@ -2934,6 +2952,16 @@
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
+  }
+
+  .tracking-\[-0\.06em\] {
+    --tw-tracking: -.06em;
+    letter-spacing: -.06em;
+  }
+
+  .tracking-\[0\.16em\] {
+    --tw-tracking: .16em;
+    letter-spacing: .16em;
   }
 
   .tracking-\[0\.18em\] {
@@ -3638,6 +3666,16 @@
       }
     }
 
+    .hover\:bg-slate-800\/70:hover {
+      background-color: #1d293db3;
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-slate-800\/70:hover {
+        background-color: color-mix(in oklab, var(--color-slate-800) 70%, transparent);
+      }
+    }
+
     .hover\:bg-slate-800\/80:hover {
       background-color: #1d293dcc;
     }
@@ -3664,6 +3702,10 @@
 
     .hover\:text-gray-700:hover {
       color: var(--color-gray-700);
+    }
+
+    .hover\:text-slate-100:hover {
+      color: var(--color-slate-100);
     }
 
     .hover\:text-slate-200:hover {

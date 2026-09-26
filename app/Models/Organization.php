@@ -48,6 +48,16 @@ class Organization extends Model
         return $this->hasMany(Lead::class);
     }
 
+    public function connections(): HasMany
+    {
+        return $this->hasMany(Connection::class);
+    }
+
+    public function adAccounts(): HasMany
+    {
+        return $this->hasMany(AdAccount::class);
+    }
+
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);

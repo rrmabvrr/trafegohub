@@ -6,19 +6,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Workspace extends Model
+class AdAccount extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'client_name',
         'organization_id',
         'client_id',
+        'platform_id',
+        'connection_id',
+        'external_account_id',
+        'name',
         'currency',
         'timezone',
+        'status',
+        'metadata',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'metadata' => 'array',
+        ];
+    }
 
     public function organization(): BelongsTo
     {
@@ -30,33 +42,18 @@ class Workspace extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function integrations(): HasMany
+    public function platform(): BelongsTo
     {
-        return $this->hasMany(Integration::class);
+        return $this->belongsTo(Platform::class);
     }
 
-    public function connections(): HasMany
+    public function connection(): BelongsTo
     {
-        return $this->hasMany(Connection::class);
-    }
-
-    public function adAccounts(): HasMany
-    {
-        return $this->hasMany(AdAccount::class);
+        return $this->belongsTo(Connection::class);
     }
 
     public function campaigns(): HasMany
     {
         return $this->hasMany(Campaign::class);
-    }
-
-    public function leads(): HasMany
-    {
-        return $this->hasMany(Lead::class);
-    }
-
-    public function automationRules(): HasMany
-    {
-        return $this->hasMany(AutomationRule::class);
     }
 }

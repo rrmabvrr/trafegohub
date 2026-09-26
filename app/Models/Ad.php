@@ -12,6 +12,7 @@ class Ad extends Model
 
     protected $fillable = [
         'ad_set_id',
+        'ad_group_id',
         'organization_id',
         'creative_id',
         'external_id',
@@ -51,6 +52,11 @@ class Ad extends Model
     public function adSet(): BelongsTo
     {
         return $this->belongsTo(AdSet::class);
+    }
+
+    public function adGroup(): BelongsTo
+    {
+        return $this->belongsTo(AdGroup::class);
     }
 
     public function organization(): BelongsTo

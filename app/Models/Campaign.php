@@ -18,6 +18,9 @@ class Campaign extends Model
         'organization_id',
         'client_id',
         'integration_id',
+        'connection_id',
+        'ad_account_id',
+        'platform_id',
         'external_id',
         'platform',
         'name',
@@ -77,6 +80,21 @@ class Campaign extends Model
         return $this->belongsTo(Integration::class);
     }
 
+    public function connection(): BelongsTo
+    {
+        return $this->belongsTo(Connection::class);
+    }
+
+    public function adAccount(): BelongsTo
+    {
+        return $this->belongsTo(AdAccount::class);
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     public function account(): BelongsTo
     {
         return $this->integration();
@@ -112,4 +130,3 @@ class Campaign extends Model
         return $this->metricSnapshots();
     }
 }
-
