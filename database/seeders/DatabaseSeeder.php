@@ -18,10 +18,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $organization = Organization::create([
-            'name' => 'Agência Alfa Marketing',
+        $organization = Organization::firstOrCreate([
             'slug' => 'agencia-alfa-marketing',
+        ], [
+            'name' => 'Agência Alfa Marketing',
         ]);
+
+        if (! $organization->wasRecentlyCreated) {
+            return;
+        }
 
         $client = Client::create([
             'organization_id' => $organization->id,
