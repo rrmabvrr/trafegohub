@@ -47,7 +47,10 @@ return new class extends Migration
                 $table->index(['organization_id', 'client_id', 'status']);
                 $table->index(['organization_id', 'workspace_id']);
                 $table->index(['platform_id', 'status']);
-                $table->unique(['organization_id', 'platform_id', 'external_account_id']);
+                $table->unique(
+                    ['organization_id', 'platform_id', 'external_account_id'],
+                    'connections_org_platform_account_unique'
+                );
             });
         }
 
@@ -69,7 +72,10 @@ return new class extends Migration
 
                 $table->index(['organization_id', 'client_id', 'status']);
                 $table->index(['platform_id', 'status']);
-                $table->unique(['organization_id', 'platform_id', 'external_account_id']);
+                $table->unique(
+                    ['organization_id', 'platform_id', 'external_account_id'],
+                    'ad_accounts_org_platform_account_unique'
+                );
             });
         }
 
