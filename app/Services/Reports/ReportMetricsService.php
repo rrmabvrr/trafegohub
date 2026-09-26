@@ -14,6 +14,7 @@ class ReportMetricsService
     public function build(array $filters): array
     {
         $campaignQuery = Campaign::query()
+            ->withCount('leads')
             ->where('workspace_id', $filters['workspace_id']);
 
         if (! empty($filters['client_id']) && $filters['client_id'] !== 'all') {
@@ -81,7 +82,7 @@ class ReportMetricsService
                 'cpm' => $campaigns->sum('impressions') > 0 ? ($campaigns->sum('total_spend') / $campaigns->sum('impressions')) * 1000 : 0,
                 'leads' => 0,
                 'conversions' => (int) $campaigns->sum('conversions'),
-                'cpl' => $campaigns->sum('leads') > 0 ? $campaigns->sum('total_spend') / $campaigns->sum('leads') : 0,
+                'cpl' => $campaigns->sum('leads_count') > 0 ? $campaigns->sum('total_spend') / $campaigns->sum('leads_count') : 0,
                 'revenue' => (float) $campaigns->sum('revenue'),
                 'roas' => $campaigns->sum('total_spend') > 0 ? $campaigns->sum('revenue') / $campaigns->sum('total_spend') : 0,
             ];
